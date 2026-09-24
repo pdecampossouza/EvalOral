@@ -1,0 +1,17 @@
+{
+  "source_records": 441,
+  "content_unique": 257,
+  "view121": 121,
+  "view_counts": {
+    "occlusal": 65,
+    "frontal": 56
+  },
+  "module_counts": {
+    "permanent_dentition_CPOD": 122,
+    "permanent_dentition_DAI": 121,
+    "deciduous_occlusion": 93,
+    "deciduous_dentition_ceod": 93,
+    "PUFA_training": 6,
+    "trauma_training": 6
+  }
+}

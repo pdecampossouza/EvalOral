@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use EvalOral, please cite the manuscript and this software repository."
+title: "EvalOral: An Explainable Evolving Neuro-Fuzzy Framework for Oral Image Pattern Discovery and Rule-Aware Visual Auditing"
+type: software
+authors:
+  - family-names: "Campos de Souza"
+    given-names: "Paulo Vitor"
+  - family-names: "Villalobos"
+    given-names: "Maria Isabel"
+  - family-names: "Marques da Silva"
+    given-names: "Alisson"
+date-released: 2026-09-24
+license: MIT
+repository-code: "https://github.com/pdecampossouza/Pipeline-for-Oral-Health-Images"

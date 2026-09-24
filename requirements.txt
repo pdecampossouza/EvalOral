@@ -1,0 +1,8 @@
+numpy>=1.26,<3
+pandas>=2.0,<4
+scikit-learn>=1.4,<2
+scipy>=1.11,<2
+matplotlib>=3.8,<4
+Pillow>=10,<13
+# Required only for experiments/09_gradcam.py:
+torch>=2.2,<3

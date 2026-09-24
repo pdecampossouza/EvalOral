@@ -1,0 +1,9 @@
+rule_id,original_label,revised_label,purity_before,purity_after
+1,occlusal,occlusal,0.6,0.6
+2,frontal,frontal,0.8,0.8
+3,occlusal,occlusal,0.8,0.8
+4,occlusal,occlusal,0.8,0.8
+7,frontal,lateral,0.2,0.8
+10,frontal,frontal,0.8,0.8
+12,occlusal,occlusal,0.6,0.6
+13,occlusal,lateral,0.0,0.8

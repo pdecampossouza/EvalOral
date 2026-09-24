@@ -1,0 +1,9 @@
+rule_id,PC1_center,PC1_sigma,PC2_center,PC2_sigma,PC3_center,PC3_sigma,PC4_center,PC4_sigma,before_feedback,after_feedback,human_support
+1,-1.11,0.208,-0.031,0.665,0.076,0.675,-0.159,0.8,occlusal,occlusal,0.6
+2,1.215,0.228,-0.103,0.611,-0.092,0.639,-0.058,0.393,frontal,frontal,0.8
+3,-0.764,0.371,0.717,0.61,0.683,0.752,0.276,0.741,occlusal,occlusal,0.8
+4,-0.329,0.536,0.235,0.876,0.148,0.662,-0.146,0.901,occlusal,occlusal,0.8
+7,1.663,0.661,-0.237,0.752,-0.355,0.792,0.037,0.665,frontal,lateral,0.8
+10,0.611,0.62,0.326,0.909,-0.431,0.901,0.435,0.678,frontal,frontal,0.8
+12,-1.692,0.587,0.131,0.606,-0.184,0.709,0.125,0.758,occlusal,occlusal_mixed,0.6
+13,-0.576,0.58,-0.536,0.705,-0.469,0.77,0.091,0.73,occlusal,lateral,0.8

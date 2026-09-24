@@ -1,0 +1,24 @@
+{
+  "source_records": 441,
+  "content_unique": 257,
+  "view121": 121,
+  "view_frontal": 56,
+  "view_occlusal": 65,
+  "primary_evolving_nf_median_macro_f1": 0.934,
+  "primary_evolving_nf_median_accuracy": 0.935,
+  "primary_median_rules": 9,
+  "manuscript_static_anchor_median_macro_f1": 0.964,
+  "feedback_gallery_mean_before": 0.575,
+  "feedback_gallery_mean_after": 0.75,
+  "feedback_logo_original_median_accuracy": 0.575,
+  "feedback_logo_updated_median_accuracy": 0.55,
+  "feedback_logo_original_median_macro_f1": 0.462,
+  "feedback_logo_updated_median_macro_f1": 0.546,
+  "feedback_seeded_cluster_logo_accuracy": 0.575,
+  "feedback_seeded_cluster_logo_macro_f1": 0.575,
+  "feedback40_counts": {
+    "lateral": 14,
+    "occlusal": 14,
+    "frontal": 12
+  }
+}

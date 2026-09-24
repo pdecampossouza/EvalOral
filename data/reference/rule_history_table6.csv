@@ -1,0 +1,7 @@
+rule_id,consequent,birth_step,support,stale_steps,changed_rounds,OR_fraction,COMP_fraction
+2,frontal,2,25,5,4,0.577,0.423
+1,occlusal,1,24,27,5,0.542,0.458
+3,occlusal,11,14,19,6,0.308,0.692
+5,frontal,25,11,55,3,0.545,0.455
+12,occlusal,74,9,13,2,0.75,0.25
+4,occlusal,12,8,28,4,0.667,0.333

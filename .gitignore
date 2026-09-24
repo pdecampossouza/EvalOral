@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+*.egg-info/
+build/
+dist/
+results/generated/09_gradcam/cnn_refit_state.pt
+# Keep paper-linked CSV/JSON/PNG outputs intentionally committed only when desired.
