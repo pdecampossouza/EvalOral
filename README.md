@@ -1,58 +1,180 @@
-# EvalOral
+# 🦷 EvalOral: Explainable Evolving Neuro-Fuzzy Learning for Oral Images
 
-**An Explainable Evolving Neuro-Fuzzy Framework for Oral Image Pattern Discovery and Rule-Aware Visual Auditing**
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![CI](https://github.com/pdecampossouza/EvalOral/actions/workflows/ci.yml/badge.svg)](https://github.com/pdecampossouza/EvalOral/actions/workflows/ci.yml)
+[![Reproducible Research](https://img.shields.io/badge/Reproducibility-paper--linked-brightgreen.svg)](docs/PAPER_TO_CODE_MAP.md)
+[![Human-in-the-Loop](https://img.shields.io/badge/Human--in--the--Loop-validation-orange.svg)](validation/)
+[![NOVA IMS](https://img.shields.io/badge/NOVA-IMS-8A2BE2.svg)](https://novaims.unl.pt/)
 
-EvalOral is a reproducibility repository for an oral-image research framework that connects:
+---
 
-- content-deduplicated, label-free visual structure discovery;
-- a single-pass evolving neuro-fuzzy classifier with persistent rule identities;
-- Gaussian antecedents, relevance-weighted coverage, and observation-dependent AND/OR/COMP behavior;
-- rule birth, adaptation, support, staleness, and exemplar histories;
-- a separate CNN/Grad-CAM visual-audit branch;
-- human semantic feedback and leave-one-volunteer-out transfer tests;
-- literal before/after fuzzy-rule inspection.
+## 🧭 Overview
 
-> **Research use only.** EvalOral is not a clinical diagnostic device.
+**EvalOral** is the reproducibility repository for the research framework:
 
-> **Data licensing:** the MIT license covers project software, not the source oral photographs. See [`DATA_LICENSE_NOTICE.md`](DATA_LICENSE_NOTICE.md) before publishing or redistributing `data/raw/`.
+> **EvalOral: An Explainable Evolving Neuro-Fuzzy Framework for Oral Image Pattern Discovery and Rule-Aware Visual Auditing**  
+> **Paulo Vitor Campos de Souza, Maria Isabel Villalobos, Alisson Marques da Silva**  
+> 2026
 
-## Scientific scope
+The project investigates how heterogeneous oral photographs can be transformed from a collection of images into **auditable, evolving visual knowledge**.
 
-The controlled supervised anchor task contains 121 permanent-dentition DAI photographs with explicitly released view labels (56 frontal, 65 occlusal). The primary evolving experiment uses 30 randomized volunteer-order streams. Each stream fits preprocessing only on three initialization volunteers, predicts each of the remaining seven volunteer blocks before labels are revealed, and then updates the evolving model.
+Instead of returning only a class label, EvalOral links each prediction to a persistent fuzzy rule whose **birth, support, updates, antecedents, logical behavior, representative images, and semantic revisions can be inspected over time**.
 
-The primary fuzzy model uses a lightweight handcrafted image representation rather than CNN embeddings:
+The framework combines:
+
+- **label-free visual structure discovery** with K-means;
+- a **single-pass evolving neuro-fuzzy classifier** with persistent rule identities;
+- **Gaussian fuzzy antecedents** and relevance-weighted coverage;
+- observation-dependent **AND / OR / COMP** fuzzy behavior;
+- **rule lineage**: birth, adaptation, support, staleness, and exemplars;
+- a **separate CNN + Grad-CAM branch** for visual explanation;
+- **human semantic feedback** and replay;
+- **leave-one-volunteer-out transfer** to previously unseen subjects;
+- literal **IF–THEN rule inspection before and after feedback**.
+
+> ⚠️ **Research use only.** EvalOral is an experimental research framework and is not a clinical diagnostic device.
+
+---
+
+## 💡 Why EvalOral?
+
+Most image classifiers answer a question such as:
+
+> *“This photograph is occlusal with probability 0.94.”*
+
+EvalOral is designed to support a richer question:
+
+> *“Which local visual rule supported the decision, when did that rule emerge, which images shaped it, how stable is it, where did the visual model focus, and what changed after human feedback?”*
+
+This makes the learned knowledge itself an object of study.
+
+A central observation of the paper is that human feedback can reveal two very different situations:
+
+1. **a coherent rule with the wrong semantic name**, and
+2. **a genuinely mixed visual region** that still needs refinement.
+
+That distinction is difficult to recover from accuracy alone.
+
+---
+
+## 🧠 Architecture at a Glance
+
+The **primary evolving neuro-fuzzy classifier does not use CNN embeddings**. Its predictive path is intentionally lightweight and auditable:
 
 ```text
-oral photograph
-    -> grayscale 56x56 + gradient-edge 56x56
-    -> concatenate (6,272 descriptors)
-    -> StandardScaler
-    -> PCA whitening (4 PCs)
-    -> evolving Gaussian fuzzy rules
-    -> relevance-weighted coverage + observation-dependent Unim
-    -> class evidence (frontal / occlusal)
+Dental photograph
+      │
+      ├── grayscale image 56×56
+      └── gradient-edge map 56×56
+                │
+                ▼
+        concatenate = 6,272 descriptors
+                │
+                ▼
+           StandardScaler
+                │
+                ▼
+        PCA whitening → 4 PCs
+                │
+                ▼
+      evolving Gaussian fuzzy rules
+                │
+      ┌─────────┴──────────┐
+      │                    │
+ fuzzy coverage     observation-dependent
+      │               AND / OR / COMP
+      └─────────┬──────────┘
+                ▼
+       effective rule activation
+                │
+                ▼
+       frontal / occlusal prediction
+                │
+                ▼
+      persistent rule history + audit
 ```
 
-The CNN is intentionally separate and is used only for Grad-CAM auditing.
-
-## Repository layout
+Two complementary branches remain separate from the primary classifier:
 
 ```text
-EvalOral_Reproducibility_Repository/
+PCA representation ──► label-free K-means visual discovery
+
+Dental photograph ──► lightweight CNN ──► Grad-CAM visual audit
+
+Rule galleries + Grad-CAM ──► human feedback ──► semantic rule calibration
+```
+
+This separation is important: the repository should **not** be interpreted as an end-to-end CNN-to-fuzzy architecture for the reported primary experiment.
+
+---
+
+## 🔬 What the Study Evaluates
+
+### Primary view-learning task
+
+The controlled anchor experiment uses **121 permanent-dentition DAI photographs** with released view labels:
+
+| Item | Value |
+|---|---:|
+| Frontal images | 56 |
+| Occlusal images | 65 |
+| Volunteers | 10 |
+| Random volunteer-order streams | 30 |
+| Median evolving-model macro-F1 | **0.934** |
+| Median final fuzzy rules | **9** |
+
+Each stream initializes preprocessing on three volunteers and then processes the remaining seven volunteer blocks **prequentially**: predict first, reveal labels next, update afterward.
+
+### Human feedback experiments
+
+The focused feedback study contains **40 reviewed rule-gallery exemplars** and introduces a provisional lateral semantic label.
+
+| Analysis | Before | After feedback |
+|---|---:|---:|
+| Mean audited-gallery purity | 0.575 | **0.750** |
+| Descriptive cluster accuracy on the same 40 images | 0.625 | **0.825** |
+| Held-out volunteer K-means semantic accuracy | 0.500 | **0.575** |
+
+The descriptive before/after clustering experiment is intentionally separate from the held-out generalization experiment.
+
+---
+
+## ✨ Main Research Contributions
+
+✅ **Content-aware oral-image analysis** with SHA-256 deduplication and provenance tracking  
+✅ **Label-free visual discovery** before supervised/evolving interpretation  
+✅ **Single-pass evolving fuzzy learning** over volunteer streams  
+✅ **Persistent rule identities** rather than disposable cluster IDs  
+✅ **Literal fuzzy rules** with Gaussian centers, widths, relevance, consequent, and support  
+✅ **Rule biographies**: birth, adaptation, support, logical regime, last update, and staleness  
+✅ **Rule-linked Grad-CAM** for cross-layer visual auditing  
+✅ **Human feedback replay** that distinguishes semantic misnaming from geometric mixing  
+✅ **Leave-one-volunteer-out transfer** after feedback  
+✅ **Before/after cluster reorganization** showing which images actually changed semantic group  
+✅ **Blinded external dental-validation workflow**  
+✅ Tests, CI, integrity checks, hashes, and paper-to-code traceability
+
+---
+
+## 📁 Repository Structure
+
+```text
+EvalOral/
+│
 ├── README.md
 ├── README_PTBR.md
-├── pyproject.toml
-├── requirements.txt
-├── environment.yml
 ├── LICENSE
 ├── CITATION.cff
+├── requirements.txt
+├── environment.yml
+├── pyproject.toml
 ├── Makefile
 │
-├── src/evaloral/
+├── src/evaloral/                  # Reusable research code
 │   ├── data.py
 │   ├── features.py
 │   ├── evolving_nf.py
-│   ├── legacy_nf.py
 │   ├── protocols.py
 │   ├── clustering.py
 │   ├── rule_history.py
@@ -60,7 +182,7 @@ EvalOral_Reproducibility_Repository/
 │   ├── feedback.py
 │   └── stats.py
 │
-├── experiments/
+├── experiments/                   # Paper-linked experiments
 │   ├── 00_prepare_data.py
 │   ├── 01_dataset_audit.py
 │   ├── 02_unsupervised_clustering.py
@@ -77,36 +199,30 @@ EvalOral_Reproducibility_Repository/
 │   └── 13_literal_rules.py
 │
 ├── data/
-│   ├── raw/                 # canonical source-module image snapshot
-│   ├── processed/           # manifests + 6,272-D feature matrices
-│   └── reference/           # paper-linked interpretability snapshots
+│   ├── raw/                        # Canonical oral-image snapshot
+│   ├── processed/                  # Manifests + feature matrices
+│   └── reference/                  # Paper-linked audit artifacts
 │
 ├── validation/
-│   ├── paper_audit_protocol/
-│   └── anatomical_hitl/     # later research extension; not a paper result
+│   ├── paper_audit_protocol/       # Blinded dental-review workflow
+│   └── anatomical_hitl/            # Future anatomical HITL extension
 │
 ├── results/
-│   ├── reference/           # manuscript-reported headline values
-│   └── generated/           # created by experiment scripts
+│   ├── reference/
+│   └── generated/
 │
-├── docs/
-│   ├── PAPER_TO_CODE_MAP.md
-│   ├── REPRODUCIBILITY_NOTES.md
-│   ├── MODEL_SCOPE.md
-│   ├── DATA_PROVENANCE.md
-│   ├── EXTERNAL_VALIDATION.md
-│   └── GITHUB_PUBLISH_CHECKLIST.md
-│
-├── paper/
-│   └── EvalOral_manuscript.pdf
-├── scripts/
-├── tests/
-└── .github/workflows/ci.yml
+├── docs/                            # Reproducibility and provenance docs
+├── paper/                           # Manuscript snapshot
+├── scripts/                         # Reproduction helpers
+├── tests/                           # Automated tests
+└── .github/workflows/ci.yml         # Continuous integration
 ```
 
-## Installation
+---
 
-### Python virtual environment
+## ⚙️ Installation
+
+### Option 1 — Python virtual environment
 
 ```bash
 python -m venv .venv
@@ -131,34 +247,45 @@ python -m pip install --upgrade pip
 pip install -e ".[all]"
 ```
 
-For everything except the CNN/Grad-CAM experiment:
+For the core experiments without the CNN / Grad-CAM branch:
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-## Quick reproducibility checks
+### Option 2 — Conda
+
+```bash
+conda env create -f environment.yml
+conda activate evaloral
+```
+
+---
+
+## ✅ Verify the Repository
+
+Run the integrity checks:
 
 ```bash
 python scripts/check_repo.py
+```
+
+Expected result:
+
+```text
+12 / 12 checks passed
+```
+
+Run the automated tests:
+
+```bash
 pytest -q
 ```
 
-Audit the bundled data:
-
-```bash
-python experiments/01_dataset_audit.py
-```
-
-Expected canonical counts:
+Expected release result:
 
 ```text
-source-module records:       441
-content-unique photographs:  257
-DAI view anchor:              121
-frontal:                       56
-occlusal:                      65
-volunteer-order streams:       30
+6 passed
 ```
 
 Fast end-to-end smoke reproduction:
@@ -167,154 +294,185 @@ Fast end-to-end smoke reproduction:
 bash scripts/reproduce_smoke.sh
 ```
 
-This uses reduced repetition counts for the computationally heavier sweeps and is intended to verify installation, data integrity, and execution flow. It does not replace the manuscript-scale defaults.
+---
 
-## Reproduce the main experiments
+## 🧪 Reproduce the Paper Experiments
 
-### 1. Label-free visual structure
+| Experiment | Command | Purpose |
+|---|---|---|
+| Dataset audit | `python experiments/01_dataset_audit.py` | Integrity, counts, provenance |
+| Unsupervised clustering | `python experiments/02_unsupervised_clustering.py` | Label-free visual structure |
+| 30 evolving streams | `python experiments/03_primary_30_streams.py` | Primary neuro-fuzzy evaluation |
+| Ablation | `python experiments/04_ablation.py` | Component contribution |
+| Sensitivity | `python experiments/05_hyperparameter_sensitivity.py` | `sigma × alpha` analysis |
+| Rule merging | `python experiments/06_merge_analysis.py` | Merge sensitivity |
+| Rule history | `python experiments/07_rule_history.py` | Rule biographies and galleries |
+| Cluster–rule concordance | `python experiments/08_cluster_rule_concordance.py` | Compare unsupervised and fuzzy structure |
+| Grad-CAM | `python experiments/09_gradcam.py --force-epoch 1` | Visual explanation branch |
+| Feedback replay | `python experiments/10_feedback_replay.py` | Human semantic calibration |
+| Feedback generalization | `python experiments/11_feedback_generalization.py --n-orders 30` | Held-out volunteer transfer |
+| Cluster reorganization | `python experiments/12_feedback_cluster_reorganization.py` | Before/after membership change |
+| Literal rules | `python experiments/13_literal_rules.py` | Explicit IF–THEN rule extraction |
 
-```bash
-python experiments/02_unsupervised_clustering.py
-```
+### One-command reproduction
 
-This fits StandardScaler + non-whitened PCA(4) on the 257 content-unique photographs and evaluates K-means for `k=2...12`. The representative `k=2` and `k=7` partitions use `random_state=42` and `n_init=20`.
-
-### 2. Primary evolving neuro-fuzzy experiment
-
-```bash
-python experiments/03_primary_30_streams.py
-```
-
-The bundled reference implementation reproduces the evolving-model headline closely/exactly in the release environment: median macro-F1 ≈ 0.93435, median accuracy ≈ 0.93494, median final rules = 9.
-
-**Important reproducibility note:** the current paired LinearSVC rerun does not reproduce the manuscript's reported 0.964 median macro-F1. See [`docs/REPRODUCIBILITY_NOTES.md`](docs/REPRODUCIBILITY_NOTES.md) before public release.
-
-### 3. Ablation
-
-```bash
-python experiments/04_ablation.py
-```
-
-### 4. Sigma/alpha sensitivity
-
-```bash
-python experiments/05_hyperparameter_sensitivity.py
-```
-
-This evaluates 24 operating points × 10 volunteer orders = 240 runs.
-
-### 5. Rule merging
-
-```bash
-python experiments/06_merge_analysis.py
-```
-
-The primary paper configuration disables functional merging. This script provides a transparent sensitivity sweep around that design choice.
-
-### 6. Rule history and galleries
-
-```bash
-python experiments/07_rule_history.py
-```
-
-### 7. Cluster–rule concordance
-
-```bash
-python experiments/08_cluster_rule_concordance.py
-```
-
-### 8. Separate CNN and Grad-CAM branch
-
-```bash
-python experiments/09_gradcam.py --force-epoch 1
-```
-
-The `--force-epoch 1` option matches the epoch selected in the reported pilot. Historical CNN weights were not retained, so regenerated saliency maps are a deterministic rerun rather than byte-identical archival heatmaps.
-
-### 9. Human semantic feedback replay
-
-```bash
-python experiments/10_feedback_replay.py
-```
-
-The paper-linked 40-image feedback set is bundled in `data/reference/author_feedback40.csv`.
-
-### 10. Feedback transfer to unseen volunteers
-
-```bash
-python experiments/11_feedback_generalization.py --n-orders 30
-```
-
-This includes both feedback-calibrated fuzzy-rule semantics and feedback-seeded K-means under leave-one-volunteer-out evaluation.
-
-### 11. Descriptive before/after cluster reorganization
-
-```bash
-python experiments/12_feedback_cluster_reorganization.py
-```
-
-This intentionally uses the same 40 audited images before and after feedback to visualize membership reorganization. It is descriptive and must not be confused with the held-out experiment above.
-
-### 12. Literal fuzzy rules
-
-```bash
-python experiments/13_literal_rules.py
-```
-
-## One-command runs
-
-Core paper analyses that do not require PyTorch:
+Core analyses:
 
 ```bash
 bash scripts/reproduce_core.sh
 ```
 
-Full suite, including CNN/Grad-CAM:
+Full suite, including CNN / Grad-CAM:
 
 ```bash
 bash scripts/reproduce_all.sh
 ```
 
-## Human validation
+---
 
-The paper's prepared blinded dental-audit protocol is in:
+## 🧑‍⚕️ Human Validation
+
+The repository includes a blinded dental-audit protocol under:
 
 ```text
 validation/paper_audit_protocol/
 ```
 
-A separate anatomical human-in-the-loop extension is preserved in:
+The reviewer-facing workflow evaluates:
+
+- visual cluster coherence;
+- rule-linked Grad-CAM plausibility;
+- artifact influence;
+- fuzzy-rule history readability and usefulness.
+
+A separate anatomical human-in-the-loop extension is stored under:
 
 ```text
 validation/anatomical_hitl/
 ```
 
-That extension is future-work infrastructure and should not be used to inflate the present paper's claims.
+This extension is **future-work infrastructure** and is intentionally separated from the claims of the present paper.
 
-## Paper-linked reference artifacts
+---
 
-`data/reference/` contains:
+## 🧩 From Fuzzy Rules to Dental Knowledge
 
-- final maximum-coverage rule assignments for the 121-image view subset;
-- the documented 40-image author-side feedback audit;
-- rule-level before/after semantic summaries;
-- literal Gaussian rule parameters used in the paper table;
-- selected rule-history values used in the paper.
+A key goal of EvalOral is to make the local knowledge explicit.
 
-These files are intentionally labeled `reference`: they support auditing and figure reconstruction, while the prequential predictions are regenerated by the experiment scripts.
+A learned region can be represented conceptually as:
 
-## Data and software license
+```text
+IF PC1 ≈ c1 (σ1)
+AND PC2 ≈ c2 (σ2)
+AND PC3 ≈ c3 (σ3)
+AND PC4 ≈ c4 (σ4)
+THEN view = frontal / occlusal / feedback-calibrated lateral
+```
 
-The project code is released under the MIT License. The bundled image snapshot derives from upstream SBBrasil calibration/training resources. See [`docs/DATA_PROVENANCE.md`](docs/DATA_PROVENANCE.md) for the separate data-provenance/licensing note.
+The rule is not just a static statement. The repository also tracks:
 
-## Citation
+```text
+rule ID
+birth step
+birth reason
+support
+antecedent updates
+AND / OR / COMP history
+last update
+staleness
+representative images
+semantic feedback
+```
 
-Citation metadata is provided in [`CITATION.cff`](CITATION.cff). Replace the manuscript placeholder DOI with the final DOI after publication.
+This enables the study of **how visual knowledge changes**, not only whether a final prediction is correct.
 
-## Scientific integrity / release status
+---
 
-The repository was assembled to expose both successful reproductions and unresolved provenance issues. Before public release, review the single flagged baseline item in [`docs/GITHUB_PUBLISH_CHECKLIST.md`](docs/GITHUB_PUBLISH_CHECKLIST.md). No result is silently overwritten merely to make a rerun match the manuscript.
+## 🔭 Research Paths Opened by EvalOral
 
-## Release audit
+The current paper focuses on visual structure, view learning, evolving rules, and explanation auditing. The framework is designed to support future work on:
 
-Software integrity, smoke-test status, and known historical-reconstruction caveats are recorded in [`docs/RELEASE_AUDIT.md`](docs/RELEASE_AUDIT.md).
+- maxilla / mandible reasoning;
+- left / right orientation;
+- anterior / posterior regions;
+- tooth / gingiva / other anatomical parsing;
+- tooth-type discovery (incisor, canine, premolar, molar);
+- tooth-level segmentation and numbering;
+- PUFA, trauma, caries, and other condition-specific expert labels;
+- active learning from dentist feedback;
+- longitudinal person-specific evolving oral-health models;
+- dedicated forensic-odontology studies.
+
+These are research directions, **not claims demonstrated by the present paper**.
+
+---
+
+## 🔗 Related Dataset Pipeline
+
+EvalOral builds on the previously released oral-image extraction and curation pipeline:
+
+**From PDF to Dental View Classification: A Human-in-the-Loop Dataset and Pipeline for Oral Health Imaging**  
+👉 https://github.com/pdecampossouza/Pipeline-for-Oral-Health-Images
+
+That repository focuses on extracting and structuring the public oral-health images. **EvalOral focuses on what can be learned, explained, audited, and evolved from them.**
+
+---
+
+## 📘 Paper and Code Traceability
+
+A direct map from manuscript components to executable scripts is available in:
+
+[`docs/PAPER_TO_CODE_MAP.md`](docs/PAPER_TO_CODE_MAP.md)
+
+Additional reproducibility documentation:
+
+- [`docs/REPRODUCIBILITY_NOTES.md`](docs/REPRODUCIBILITY_NOTES.md)
+- [`docs/RELEASE_AUDIT.md`](docs/RELEASE_AUDIT.md)
+- [`docs/DATA_PROVENANCE.md`](docs/DATA_PROVENANCE.md)
+- [`docs/MODEL_SCOPE.md`](docs/MODEL_SCOPE.md)
+
+### Reproducibility note
+
+The evolving-model headline is reproducible in the packaged environment. A historical LinearSVC headline value in the manuscript does not currently reproduce under the paper-matched rerun; this discrepancy is documented transparently in [`docs/REPRODUCIBILITY_NOTES.md`](docs/REPRODUCIBILITY_NOTES.md) rather than being silently overwritten.
+
+---
+
+## 📘 Citation
+
+If you use EvalOral, please cite the manuscript and software repository.
+
+```bibtex
+@software{souza2026evaloral,
+  author  = {Paulo Vitor Campos de Souza and Maria Isabel Villalobos and Alisson Marques da Silva},
+  title   = {EvalOral: An Explainable Evolving Neuro-Fuzzy Framework for Oral Image Pattern Discovery and Rule-Aware Visual Auditing},
+  year    = {2026},
+  url     = {https://github.com/pdecampossouza/EvalOral},
+  license = {MIT}
+}
+```
+
+Citation metadata is also available in [`CITATION.cff`](CITATION.cff).
+
+---
+
+## ⚖️ License
+
+The project software is released under the **MIT License**. See [`LICENSE`](LICENSE).
+
+Data provenance and image-redistribution information are documented separately in:
+
+- [`DATA_LICENSE_NOTICE.md`](DATA_LICENSE_NOTICE.md)
+- [`docs/DATA_PROVENANCE.md`](docs/DATA_PROVENANCE.md)
+
+---
+
+## 📬 Contact
+
+**Paulo Vitor Campos de Souza**  
+NOVA Information Management School (NOVA IMS)  
+Universidade Nova de Lisboa, Portugal  
+GitHub: [@pdecampossouza](https://github.com/pdecampossouza)
+
+---
+
+> ✳️ **From oral photographs to evolving, auditable dental-image knowledge.**
